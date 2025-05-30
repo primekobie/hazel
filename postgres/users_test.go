@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ukobie/hazel/models"
-	"github.com/ukobie/hazel/postgres"
+	"github.com/freekobie/hazel/models"
+	"github.com/freekobie/hazel/postgres"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"

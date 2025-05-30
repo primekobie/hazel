@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/ukobie/hazel/handlers"
+	"github.com/freekobie/hazel/handlers"
 )
 
 type application struct {

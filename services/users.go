@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/ukobie/hazel/mail"
-	"github.com/ukobie/hazel/models"
+	"github.com/freekobie/hazel/mail"
+	"github.com/freekobie/hazel/models"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )

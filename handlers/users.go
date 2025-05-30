@@ -5,9 +5,10 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/freekobie/hazel/models"
+	"github.com/freekobie/hazel/services"
 	"github.com/gin-gonic/gin"
-	"github.com/ukobie/hazel/models"
-	"github.com/ukobie/hazel/services"
+	"github.com/google/uuid"
 )
 
 func (h *Handler) CreateUser(c *gin.Context) {
@@ -87,7 +88,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.us.FetchUser(c.Request.Context(), getUUID(userId))
+	user, err := h.us.FetchUser(c.Request.Context(), uuid.MustParse(userId))
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})

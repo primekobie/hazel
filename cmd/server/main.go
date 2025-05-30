@@ -4,10 +4,10 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/ukobie/hazel/handlers"
-	"github.com/ukobie/hazel/mail"
-	"github.com/ukobie/hazel/postgres"
-	"github.com/ukobie/hazel/services"
+	"github.com/freekobie/hazel/handlers"
+	"github.com/freekobie/hazel/mail"
+	"github.com/freekobie/hazel/postgres"
+	"github.com/freekobie/hazel/services"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
