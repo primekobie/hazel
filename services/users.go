@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/freekobie/hazel/auth"
 	"github.com/freekobie/hazel/mail"
 	"github.com/freekobie/hazel/models"
 	"github.com/google/uuid"
@@ -16,6 +17,7 @@ var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrUnverifiedUser     = errors.New("user has an unverified email")
 	ErrInvalidToken       = errors.New("token is invalid or expired")
+	ErrFailedOperation    = errors.New("failed to process request")
 )
 
 const (
@@ -41,7 +43,7 @@ func (s *UserService) CreateUser(ctx context.Context, name, email, password stri
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		slog.Error("failed to hash password", "error", err)
-		return nil, err
+		return nil, ErrFailedOperation
 	}
 	now := time.Now().UTC()
 	user := &models.User{
@@ -140,8 +142,37 @@ func (us *UserService) ResendOTP(ctx context.Context, email string) error {
 	return nil
 }
 
-func (us *UserService) NewSession(context context.Context, email string, password string) (any, error) {
-	panic("unimplemented")
+func (us *UserService) NewSession(ctx context.Context, email string, password string) (*auth.UserSession, error) {
+	user, err := us.store.GetUserByMail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+
+	if !user.Verified {
+		return nil, ErrUnverifiedUser
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return nil, ErrInvalidCredentials
+		}
+		slog.Error("failed to compare password and hash", "error", err.Error())
+		return nil, ErrFailedOperation
+	}
+
+	ttl := 15 * (24 * time.Hour)
+	refresh, err := auth.GenerateToken(user.Id, ttl)
+	if err != nil {
+		return nil, ErrFailedOperation
+	}
+	session := &auth.UserSession{
+		User:         user,
+		RefreshToken: refresh,
+		ExpiresAt:    time.Now().Add(ttl),
+	}
+
+	return session, nil
 }
 
 // UpdateUser updates an existing user's details

@@ -13,9 +13,9 @@
 ---
 
 ## 🔐 Authentication & Authorization (JWT)
-- [ ] User registration
+- [X] User registration
 - [ ] User login
-- [ ] Password hashing (bcrypt)
+- [X] Password hashing (bcrypt)
 - [ ] JWT generation (access token)
 - [ ] JWT middleware for route protection
 - [ ] **Role-based middleware (Admin, Manager, User)** [Maybe]
@@ -23,7 +23,7 @@
 ---
 
 ## 🗂️ Core Models & Database Schema
-- [ ] User
+- [X] User
 - [ ] Workspace
 - [ ] Project (belongs to Workspace)
 - [ ] Task (belongs to Project)
@@ -37,7 +37,8 @@
 ## 🔁 API Endpoints
 
 ### Auth
-- [ ] `POST /auth/register` – Register new user
+- [X] `POST /auth/register` – Register new user
+- [X] `POST /auth/verify` – Verify user email address
 - [ ] `POST /auth/login` – Authenticate and return JWT
 
 ### Users

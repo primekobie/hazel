@@ -61,20 +61,24 @@ func (h *Handler) VerifyUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
-func (h *Handler) Login(c *gin.Context) {
+func (h *Handler) LoginUser(c *gin.Context) {
 	var input struct {
 		Email    string `json:"email" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
+		slog.Error("failed to parse request body", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "failed to parse request body"})
 		return
 	}
 
 	session, err := h.us.NewSession(c.Request.Context(), input.Email, input.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid credentials"})
+		if errors.Is(err, services.ErrFailedOperation) {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": ""})
+		}
+		c.JSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 		return
 	}
 
