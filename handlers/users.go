@@ -180,7 +180,7 @@ func (h *Handler) UpdateUserData(c *gin.Context) {
 	user, err := h.us.UpdateUser(c.Request.Context(), input)
 	if err != nil {
 		if !errors.Is(err, services.ErrFailedOperation) {
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
