@@ -19,9 +19,13 @@ func (s *application) routes() *gin.Engine {
 	authorized := router.Group("/")
 	authorized.Use(middlewares.Authentication())
 	{
+		//users
 		authorized.GET("/users/:id", s.h.GetUser)
 		authorized.PATCH("/users/profile", s.h.UpdateUserData)
 		authorized.DELETE("/users/:id", s.h.DeleteUser)
+
+		// workspaces
+		authorized.POST("/workspaces", s.h.CreateWorkspace)
 	}
 
 	return router

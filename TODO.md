@@ -1,6 +1,6 @@
 # TODO: Project Management Backend (Go + Gin)
 
-## ✅ Initial Setup
+## Initial Setup
 - [X] Initialize Git repository
 - [X] Create project structure 
 - [X] Initialize Go module (`go mod init`)
@@ -12,7 +12,7 @@
 
 ---
 
-## 🔐 Authentication & Authorization (JWT)
+## Authentication & Authorization (JWT)
 - [X] User registration
 - [X] User login
 - [X] Password hashing (bcrypt)
@@ -22,7 +22,7 @@
 
 ---
 
-## 🗂️ Core Models & Database Schema
+## Core Models & Database Schema
 - [X] User
 - [ ] Workspace
 - [ ] Project (belongs to Workspace)
@@ -34,7 +34,7 @@
 
 ---
 
-## 🔁 API Endpoints
+## API Endpoints
 
 ### Auth
 - [X] `POST /auth/register` – Register new user
@@ -43,10 +43,9 @@
 - [X] `POST /auth/verify/request` - Request email verification code
 
 ### Users
-- [X] `GET /users/:id` – Get current profile
-- [ ] `GET /users/me` – Get current user profile
+- [X] `GET /users/:id` – Get user profile
 - [X] `PATCH /users/me` – Update user profile
-- [ ] `DELETE /users/me` – Delete account
+- [X] `DELETE /users/me` – Delete account
 
 ### Workspaces
 - [ ] `POST /workspaces` – Create workspace
@@ -77,7 +76,7 @@
 
 ---
 
-## ⚙️ Middleware & Utilities
+## Middleware & Utilities
 - [X] JWT authentication middleware
 - [ ] Error handling middleware
 - [ ] Request logging (Gin's logger or `zap`)
@@ -86,7 +85,7 @@
 
 ---
 
-## 🧪 Testing
+## Testing
 - [ ] Unit tests for handlers
 - [ ] Unit tests for services and database logic
 - [ ] Integration tests with PostgreSQL
@@ -96,14 +95,14 @@
 
 ---
 
-## 📊 Documentation
+## Documentation
 - [ ] API documentation (Swagger / OpenAPI via `swaggo`)
 - [ ] Postman collection or Insomnia setup
 - [ ] README.md with setup, build, and API usage instructions
 
 ---
 
-## 🚀 Deployment
+## Deployment
 - [ ] Production-ready Dockerfile
 - [ ] `docker-compose.yml` for dev and prod
 - [ ] Environment-based config (dev, staging, prod)
