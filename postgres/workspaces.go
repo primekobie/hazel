@@ -24,8 +24,8 @@ func (w *WorkspaceStore) Create(ctx context.Context, ws *models.Workspace) error
 	wsquery := `INSERT INTO workspaces(id, name, description, user_id, created_at, last_modified)
 	VALUES($1, $2, $3, $4, $5, $5);`
 
-	memberquery := `INSERT INTO workspace_memberships(workspace_id, user_id)
-	VALUES($1, $2)`
+	memberquery := `INSERT INTO workspace_memberships(workspace_id, user_id, role)
+	VALUES($1, $2, $3);`
 
 	tx, err := w.conn.Begin(ctx)
 	if err != nil {
@@ -40,7 +40,7 @@ func (w *WorkspaceStore) Create(ctx context.Context, ws *models.Workspace) error
 		return err
 	}
 
-	_, err = tx.Exec(ctx, memberquery, ws.Id, ws.User.Id)
+	_, err = tx.Exec(ctx, memberquery, ws.Id, ws.User.Id, ws.User.Role)
 	if err != nil {
 		slog.Error("failed to create workspace membership", "error", err)
 		return err
@@ -84,8 +84,26 @@ func (w *WorkspaceStore) Get(ctx context.Context, id uuid.UUID) (*models.Workspa
 
 // GetAllForUser implements models.WorkspaceStore.
 func (w *WorkspaceStore) GetAllForUser(ctx context.Context, userId uuid.UUID) ([]models.Workspace, error) {
-	query := `SELECT id, name, description, user_id, created_at, last_modified
-	FROM workspaces WHERE user_id = $1;`
+	query := `SELECT
+	w.id,
+	w.name,
+	w.description,
+	w.created_at,
+	w.last_modified,
+	u.id,
+	u.name,
+	u.email,
+	u.profile_photo,
+	u.created_at,
+	u.last_modified,
+	u.verified,
+	wm.role
+	FROM users AS u
+	INNER JOIN workspace_memberships AS wm
+	ON u.id = wm.user_id
+	INNER JOIN workspaces AS w
+	ON w.user_id = u.id
+	WHERE u.id = $1;` // FIX: fix error of return more rows and wrong data
 
 	rows, err := w.conn.Query(ctx, query, userId)
 	if err != nil {
@@ -95,9 +113,11 @@ func (w *WorkspaceStore) GetAllForUser(ctx context.Context, userId uuid.UUID) ([
 
 	workspaces := []models.Workspace{}
 	for rows.Next() {
-		var ws models.Workspace
+		ws := models.Workspace{
+			User: &models.User{},
+		}
 
-		err = rows.Scan(&ws.Id, &ws.Name, &ws.Description, &ws.User.Id, &ws.CreatedAt, &ws.LastModified)
+		err := rows.Scan(&ws.Id, &ws.Name, &ws.Description, &ws.CreatedAt, &ws.LastModified, &ws.User.Id, &ws.User.Name, &ws.User.Email, &ws.User.ProfilePhoto, &ws.User.CreatedAt, &ws.User.LastModifed, &ws.User.Verified, &ws.User.Role)
 		if err != nil {
 			slog.Error("failed to scan workspace", "error", err.Error())
 			return nil, err
@@ -105,6 +125,7 @@ func (w *WorkspaceStore) GetAllForUser(ctx context.Context, userId uuid.UUID) ([
 
 		workspaces = append(workspaces, ws)
 	}
+
 	return workspaces, nil
 }
 

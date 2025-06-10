@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/freekobie/hazel/models"
@@ -61,15 +60,9 @@ func (h *Handler) GetWorkspace(c *gin.Context) {
 
 // Get all the workspaces where a user has membership.
 func (h *Handler) GetUserWorkspaces(c *gin.Context) {
-	idStr := c.Param("id")
-	fmt.Println(idStr)
+	idStr, _ := c.Get("user_id")
 
-	if err := validate.Var(idStr, "uuid"); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id format"})
-		return
-	}
-
-	workspaces, err := h.wss.GetWorkspace(c.Request.Context(), uuid.MustParse(idStr))
+	workspaces, err := h.wss.GetUserWorkspaces(c.Request.Context(), uuid.MustParse(idStr.(string)))
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})

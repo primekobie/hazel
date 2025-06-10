@@ -16,6 +16,7 @@ type User struct {
 	Id           uuid.UUID `json:"id"`
 	Name         string    `json:"name"`
 	Email        string    `json:"email"`
+	Role         string    `json:"role,omitempty"`
 	PasswordHash []byte    `json:"-"`
 	ProfilePhoto string    `json:"profilePhoto"`
 	CreatedAt    time.Time `json:"createdAt"`
