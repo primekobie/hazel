@@ -74,3 +74,29 @@ func (h *Handler) GetUserWorkspaces(c *gin.Context) {
 
 	c.JSON(http.StatusOK, workspaces)
 }
+
+func (h *Handler) UpdateWorkspace(c *gin.Context) {
+	idStr := c.Param("id")
+	if err := validate.Var(idStr, "uuid"); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id format"})
+		return
+	}
+
+	var input map[string]string
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	input["id"] = idStr
+
+	ws, err := h.wss.UpdateWorkspace(c.Request.Context(), input)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, ws)
+}

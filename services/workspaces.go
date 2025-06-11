@@ -48,20 +48,29 @@ func (s *WorkspaceService) GetUserWorkspaces(ctx context.Context, id uuid.UUID) 
 	return workspaces, nil
 }
 
-func (s *WorkspaceService) UpdateWorkspace(ctx context.Context, ws *models.Workspace) error {
-	workspace, err := s.store.Get(ctx, ws.Id)
+func (s *WorkspaceService) UpdateWorkspace(ctx context.Context, wsData map[string]string) (*models.Workspace, error) {
+	id, _ := wsData["id"]
+	workspace, err := s.store.Get(ctx, uuid.MustParse(id))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	workspace.Name = ws.Name
-	workspace.Description = ws.Description
+	name, ok := wsData["name"]
+	if ok {
+		workspace.Name = name
+	}
+
+	description, ok := wsData["description"]
+	if ok {
+		workspace.Description = description
+	}
+
 	workspace.LastModified = time.Now()
 
 	err = s.store.Update(ctx, workspace)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return workspace, nil
 }
