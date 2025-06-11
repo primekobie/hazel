@@ -213,7 +213,7 @@ func (us *UserService) RefreshSession(ctx context.Context, refreshToken string) 
 		return nil, err
 	}
 
-	ttl := 30 * time.Minute
+	ttl := 2 * time.Hour // TODO: make time shorter
 	accessToken, err := auth.GenerateToken(user.Id, user.Email, ttl, auth.TokenTypeAccess)
 	if err != nil {
 		return nil, err

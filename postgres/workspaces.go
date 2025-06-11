@@ -57,8 +57,18 @@ func (w *WorkspaceStore) Create(ctx context.Context, ws *models.Workspace) error
 // Get implements models.WorkspaceStore.
 func (w *WorkspaceStore) Get(ctx context.Context, id uuid.UUID) (*models.Workspace, error) {
 	query := `SELECT
-	w.id, w.name, w.description, w.created_at, w.last_modified,
-	u.id, u.name, u.email, u.profile_photo, u.created_at, u.last_modified, u.verified
+	w.id,
+	w.name,
+	w.description,
+	w.created_at,
+	w.last_modified,
+	u.id,
+	u.name,
+	u.email,
+	u.profile_photo,
+	u.created_at,
+	u.last_modified,
+	u.verified
 	FROM workspaces AS w
 	INNER JOIN users AS u
 	ON w.user_id = u.id
@@ -96,8 +106,7 @@ func (w *WorkspaceStore) GetAllForUser(ctx context.Context, userId uuid.UUID) ([
 	u.profile_photo,
 	u.created_at,
 	u.last_modified,
-	u.verified,
-	wm.role
+	u.verified
 	FROM workspace_memberships AS wm
   	INNER JOIN workspaces AS w ON wm.workspace_id = w.id
 	INNER JOIN users AS u	ON w.user_id = u.id
@@ -115,7 +124,7 @@ func (w *WorkspaceStore) GetAllForUser(ctx context.Context, userId uuid.UUID) ([
 			User: &models.User{},
 		}
 
-		err := rows.Scan(&ws.Id, &ws.Name, &ws.Description, &ws.CreatedAt, &ws.LastModified, &ws.User.Id, &ws.User.Name, &ws.User.Email, &ws.User.ProfilePhoto, &ws.User.CreatedAt, &ws.User.LastModifed, &ws.User.Verified, &ws.User.Role)
+		err := rows.Scan(&ws.Id, &ws.Name, &ws.Description, &ws.CreatedAt, &ws.LastModified, &ws.User.Id, &ws.User.Name, &ws.User.Email, &ws.User.ProfilePhoto, &ws.User.CreatedAt, &ws.User.LastModifed, &ws.User.Verified)
 		if err != nil {
 			slog.Error("failed to scan workspace", "error", err.Error())
 			return nil, err

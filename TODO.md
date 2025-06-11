@@ -51,10 +51,11 @@
 - [X] `POST /workspaces` – Create workspace
 - [X] `GET /workspaces` – List all user workspaces
 - [X] `GET /workspaces/:id` – Get specific workspace
-- [ ] `PATCH /workspaces/:id` – Update workspace
+- [X] `PATCH /workspaces/:id` – Update workspace
 - [ ] `DELETE /workspaces/:id` – Delete workspace
 - [ ] `POST /workspaces/:id/member` - Join a workspace
 - [ ] `DELETE /workspaces/:id/member` - Leave a workspace
+- [ ] fix user role in fetch user workspaces response.
 
 ### Projects
 - [ ] `POST /workspaces/:workspaceId/projects` – Create project

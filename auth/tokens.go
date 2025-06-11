@@ -39,9 +39,10 @@ type UserAccess struct {
 }
 
 func GenerateToken(userID uuid.UUID, email string, duration time.Duration, tokenType TokenType) (string, error) {
+	exp := time.Now().Add(duration)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iat":        time.Now().UTC().UnixNano(),
-		"exp":        time.Now().Add(duration).UnixNano(),
+		"iat":        time.Now().UTC().Unix(),
+		"exp":        exp.UTC().Unix(),
 		"sub":        userID.String(),
 		"token_type": tokenType,
 		"email":      email,
@@ -60,15 +61,21 @@ func ValidateToken(tokenStr string, tokenType TokenType) (*CustomClaims, error) 
 	token, err := jwt.ParseWithClaims(tokenStr, &CustomClaims{}, func(t *jwt.Token) (any, error) {
 		return []byte(os.Getenv("TOKEN_SECRET")), nil
 	})
-	if err != nil || !token.Valid {
+	if err != nil {
 		return nil, err
 	}
-
-	if claims, ok := token.Claims.(*CustomClaims); ok {
-		if claims.TokenType != string(tokenType) {
-			return nil, ErrInvalidToken
-		}
-		return claims, err
+	if !token.Valid {
+		return nil, ErrInvalidToken
 	}
-	return nil, errors.New("failed to validate token")
+
+	claims, ok := token.Claims.(*CustomClaims)
+	if !ok {
+		return nil, errors.New("failed to parse token claims")
+	}
+
+	if claims.TokenType != string(tokenType) {
+		return nil, ErrInvalidToken
+	}
+
+	return claims, nil
 }
