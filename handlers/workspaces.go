@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"log/slog"
 	"net/http"
 
 	"github.com/freekobie/hazel/models"
@@ -39,14 +40,14 @@ func (h *Handler) CreateWorkspace(c *gin.Context) {
 }
 
 func (h *Handler) GetWorkspace(c *gin.Context) {
-	idStr := c.Param("id")
-
-	if err := validate.Var(idStr, "uuid"); err != nil {
+	id, err := getUUIDparam(c, "id")
+	if err != nil {
+		slog.Error("failed to get uuid param", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id format"})
 		return
 	}
 
-	ws, err := h.wss.GetWorkspace(c.Request.Context(), uuid.MustParse(idStr))
+	ws, err := h.wss.GetWorkspace(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -77,21 +78,22 @@ func (h *Handler) GetUserWorkspaces(c *gin.Context) {
 }
 
 func (h *Handler) UpdateWorkspace(c *gin.Context) {
-	idStr := c.Param("id")
-	if err := validate.Var(idStr, "uuid"); err != nil {
+	id, err := getUUIDparam(c, "id")
+	if err != nil {
+		slog.Error("failed to get uuid param", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id format"})
 		return
 	}
 
 	var input map[string]string
 
-	err := c.ShouldBindJSON(&input)
+	err = c.ShouldBindJSON(&input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	input["id"] = idStr
+	input["id"] = id.String()
 
 	ws, err := h.wss.UpdateWorkspace(c.Request.Context(), input)
 	if err != nil {
@@ -103,13 +105,14 @@ func (h *Handler) UpdateWorkspace(c *gin.Context) {
 }
 
 func (h *Handler) DeleteWorkspace(c *gin.Context) {
-	idStr := c.Param("id")
-	if err := validate.Var(idStr, "uuid"); err != nil {
+	id, err := getUUIDparam(c, "id")
+	if err != nil {
+		slog.Error("failed to get uuid param", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id format"})
 		return
 	}
 
-	err := h.wss.DeleteWorkspace(c.Request.Context(), uuid.MustParse(idStr))
+	err = h.wss.DeleteWorkspace(c.Request.Context(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return
@@ -119,8 +122,9 @@ func (h *Handler) DeleteWorkspace(c *gin.Context) {
 }
 
 func (h *Handler) AddWorkspaceMember(c *gin.Context) {
-	wrkId := c.Param("id")
-	if err := validate.Var(wrkId, "uuid"); err != nil {
+	id, err := getUUIDparam(c, "id")
+	if err != nil {
+		slog.Error("failed to get uuid param", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id format"})
 		return
 	}
@@ -130,13 +134,13 @@ func (h *Handler) AddWorkspaceMember(c *gin.Context) {
 		Role   string    `json:"role" validate:"required"`
 	}
 
-	err := c.ShouldBindJSON(&input)
+	err = c.ShouldBindJSON(&input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	err = h.wss.AddWorkspaceMember(c.Request.Context(), uuid.MustParse(wrkId), input.UserId, input.Role)
+	err = h.wss.AddWorkspaceMember(c.Request.Context(), id, input.UserId, input.Role)
 	if err != nil {
 		if errors.Is(err, services.ErrFailedOperation) {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
@@ -155,8 +159,9 @@ func (h *Handler) GetWorkspaceMembers(c *gin.Context) {
 }
 
 func (h *Handler) DeleteWorkspaceMember(c *gin.Context) {
-	wrkId := c.Param("id")
-	if err := validate.Var(wrkId, "uuid"); err != nil {
+	id, err := getUUIDparam(c, "id")
+	if err != nil {
+		slog.Error("failed to get uuid param", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id format"})
 		return
 	}
@@ -166,7 +171,7 @@ func (h *Handler) DeleteWorkspaceMember(c *gin.Context) {
 		return
 	}
 
-	err := h.wss.DeleteWorkspaceMember(c.Request.Context(), uuid.MustParse(wrkId), uuid.MustParse(memberId))
+	err = h.wss.DeleteWorkspaceMember(c.Request.Context(), id, uuid.MustParse(memberId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return

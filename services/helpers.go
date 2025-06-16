@@ -24,7 +24,7 @@ func hashString(token string) string {
 	return hex.EncodeToString(hash[:])
 }
 
-func (us *UserService) sendEmail(recipients []mail.Address, template string, data interface{}) {
+func (us *UserService) sendEmail(recipients []mail.Address, template string, data any) {
 	// send email
 	go func() {
 		err := us.mail.Send(recipients, template, data)
