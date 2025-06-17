@@ -11,18 +11,18 @@ import (
 type TaskStatus string
 
 const (
-	StatusTodo       TaskStatus = "To Do"
-	StatusInProgress TaskStatus = "In Progress"
-	StatusDone       TaskStatus = "Done"
+	StatusTodo       TaskStatus = "todo"
+	StatusInProgress TaskStatus = "started"
+	StatusDone       TaskStatus = "complete"
 )
 
 // TaskPriority defines allowed priorities for a task.
 type TaskPriority string
 
 const (
-	PriorityLow    TaskPriority = "Low"
-	PriorityMedium TaskPriority = "Medium"
-	PriorityHigh   TaskPriority = "High"
+	PriorityLow    TaskPriority = "low"
+	PriorityMedium TaskPriority = "medium"
+	PriorityHigh   TaskPriority = "high"
 )
 
 // Task represents a single work item within a project.
@@ -30,14 +30,11 @@ type Task struct {
 	Id          uuid.UUID    `json:"id"`
 	Title       string       `json:"title"`
 	Description string       `json:"description"`
-	ProjectID   uuid.UUID    `json:"projectId"`
-	AssigneeID  uuid.UUID    `json:"assigneeId,omitzero"`
-	Assignee    *User        `json:"assignee,omitempty"`
-	ReporterID  uuid.UUID    `json:"reporterId"`
-	Reporter    *User        `json:"reporter,omitempty"`
+	Project     *Project     `json:"project,omitemtpy"`
+	AssignedTo  []User       `json:"assignedTo,omitempty"`
 	Status      TaskStatus   `json:"status"`
 	Priority    TaskPriority `json:"priority"`
-	DueDate     time.Time    `json:"dueDate,omitzero"`
+	Due         time.Time    `json:"due,omitzero"`
 	CreatedAt   time.Time    `json:"createdAt"`
 	UpdatedAt   time.Time    `json:"updatedAt"`
 }
