@@ -13,10 +13,10 @@ type Date struct {
 	time.Time
 }
 
-const dateLayout = "2006-01-02"
+const DateLayout = "2006-01-02"
 
 func (d *Date) MarshalJSON() ([]byte, error) {
-	formatted := fmt.Sprintf("\"%s\"", d.Format(dateLayout))
+	formatted := fmt.Sprintf("\"%s\"", d.Format(DateLayout))
 	return []byte(formatted), nil
 }
 
@@ -30,7 +30,7 @@ func (d *Date) UnmarshalJSON(data []byte) error {
 		str = str[1 : len(str)-1]
 	}
 
-	parsed, err := time.Parse(dateLayout, str)
+	parsed, err := time.Parse(DateLayout, str)
 	if err != nil {
 		slog.Error("failed to parse time", "error", err.Error())
 		return err

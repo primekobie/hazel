@@ -21,8 +21,8 @@ func (w *WorkspaceStore) CreateProject(ctx context.Context, project *models.Proj
 		project.Name,
 		project.Description,
 		project.Workspace.Id,
-		project.StartDate.Format("2006-01-02"),
-		project.EndDate.Format("2006-01-02"),
+		project.StartDate.Format(models.DateLayout),
+		project.EndDate.Format(models.DateLayout),
 		project.CreatedAt,
 		project.LastModified,
 	)
@@ -35,6 +35,22 @@ func (w *WorkspaceStore) CreateProject(ctx context.Context, project *models.Proj
 }
 
 func (w *WorkspaceStore) UpdateProject(ctx context.Context, project *models.Project) error {
+	query := `UPDATE projects SET name = $1, description = $2, start_date = NULLIF($3,'0001-01-01'::DATE), end_date = NULLIF($4,'0001-01-01'::DATE), last_modified = $5 WHERE id = $6;`
+	_, err := w.conn.Exec(
+		ctx,
+		query,
+		project.Name,
+		project.Description,
+		project.StartDate.Format(models.DateLayout),
+		project.EndDate.Format(models.DateLayout),
+		project.LastModified,
+		project.Id,
+	)
+	if err != nil {
+		slog.Error("failed to update project", "error", err.Error())
+		return err
+	}
+
 	return nil
 }
 
@@ -43,8 +59,8 @@ func (w *WorkspaceStore) GetProject(ctx context.Context, id uuid.UUID) (*models.
 	p.id,
 	p.name,
 	p.description,
-	p.start_date,
-	p.end_date,
+	COALESCE(p.start_date,'0001-01-01'),
+	COALESCE(p.end_date,'0001-01-01'),
 	p.created_at,
 	p.last_modified,
 	w.id,
@@ -59,7 +75,7 @@ func (w *WorkspaceStore) GetProject(ctx context.Context, id uuid.UUID) (*models.
 	row := w.conn.QueryRow(ctx, query, id)
 	project := &models.Project{Workspace: &models.Workspace{}}
 
-	err := row.Scan(&project.Id, &project.Name, &project.Description, &project.StartDate, &project.EndDate, &project.CreatedAt, &project.LastModified, &project.Workspace.Id, &project.Workspace.Name, &project.Workspace.Description, &project.Workspace.CreatedAt, &project.Workspace.LastModified)
+	err := row.Scan(&project.Id, &project.Name, &project.Description, &project.StartDate.Time, &project.EndDate.Time, &project.CreatedAt, &project.LastModified, &project.Workspace.Id, &project.Workspace.Name, &project.Workspace.Description, &project.Workspace.CreatedAt, &project.Workspace.LastModified)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, models.ErrNotFound
@@ -76,5 +92,12 @@ func (w *WorkspaceStore) GetWorkspaceProjects(ctx context.Context, workspaceId u
 }
 
 func (w *WorkspaceStore) DeleteProject(ctx context.Context, id uuid.UUID) error {
+	query := `DELETE FROM projects WHERE id = $1;`
+
+	_, err := w.conn.Exec(ctx, query, id)
+	if err != nil {
+		slog.Error("failed to delete project", "error", err.Error())
+		return err
+	}
 	return nil
 }

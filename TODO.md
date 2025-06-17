@@ -27,7 +27,6 @@
 - [X] Workspace
 - [X] Project (belongs to Workspace)
 - [X] Task (belongs to Project)
-- [ ] Comment (optional, belongs to Task)
 - [X] Auto migrations (`github.com/pressly/goose`)
 - [ ] Database seeding for development
 
@@ -58,9 +57,9 @@
 
 ### Projects
 - [X] `POST /projects` – Create project
-- [ ] `GET /projects/:id` – Get project details
-- [ ] `PATCH /projects/:id` – Update project
-- [ ] `DELETE /projects/:id` – Delete project
+- [X] `GET /projects/:id` – Get project details
+- [X] `PATCH /projects/:id` – Update project
+- [X] `DELETE /projects/:id` – Delete project
 
 ### Tasks
 - [ ] `POST /projects/:projectId/tasks` – Create task
@@ -69,11 +68,6 @@
 - [ ] `PATCH /tasks/:id` – Update task
 - [ ] `DELETE /tasks/:id` – Delete task
 - [ ] `PATCH /tasks/:id/assign` – Assign task to user
-- [ ] `PATCH /tasks/:id/status` – Update task status (To Do, In Progress, Done)
-
-### Comments (optional)
-- [ ] `POST /tasks/:taskId/comments` – Add comment
-- [ ] `GET /tasks/:taskId/comments` – Get all comments on task
 
 ---
 
