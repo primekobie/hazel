@@ -51,7 +51,7 @@
 - [X] `DELETE /workspaces/:id` – Delete workspace
 - [X] `POST /workspaces/:id/member` - Join a workspace
 - [X] `DELETE /workspaces/:id/member` - Leave a workspace
-- [ ] `GET /workspaces/:workspaceId/projects` – List projects in a workspace(list can be filtered by `all` or `member`)
+- [X] `GET /workspaces/:workspaceId/projects` – List projects in a workspace
 
 ### Projects
 - [X] `POST /projects` – Create project
@@ -60,11 +60,11 @@
 - [X] `DELETE /projects/:id` – Delete project
 
 ### Tasks
-- [ ] `POST /projects/:projectId/tasks` – Create task
-- [ ] `GET /projects/:projectId/tasks` – List tasks in a project
-- [ ] `GET /tasks/:id` – Get task
-- [ ] `PATCH /tasks/:id` – Update task
-- [ ] `DELETE /tasks/:id` – Delete task
+- [X] `POST /projects/:projectId/tasks` – Create task
+- [X] `GET /projects/:projectId/tasks` – List tasks in a project
+- [X] `GET /tasks/:id` – Get task
+- [X] `PATCH /tasks/:id` – Update task
+- [X] `DELETE /tasks/:id` – Delete task
 - [ ] `PATCH /tasks/:id/assign` – Assign task to user
 
 ---

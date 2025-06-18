@@ -88,7 +88,41 @@ func (w *WorkspaceStore) GetProject(ctx context.Context, id uuid.UUID) (*models.
 }
 
 func (w *WorkspaceStore) GetWorkspaceProjects(ctx context.Context, workspaceId uuid.UUID) ([]models.Project, error) {
-	return nil, nil
+	query := `SELECT
+	id,
+	name,
+	description,
+	COALESCE(start_date,'0001-01-01'),
+	COALESCE(end_date,'0001-01-01'),
+	created_at,
+	last_modified
+	FROM projects
+	WHERE workspace_id = $1;`
+
+	projects := []models.Project{}
+
+	rows, err := w.conn.Query(ctx, query, workspaceId)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, models.ErrNotFound
+		}
+		slog.Error("failed to fetch projects", "error", err.Error())
+		return nil, err
+	}
+
+	for rows.Next() {
+		project := models.Project{}
+
+		err := rows.Scan(&project.Id, &project.Name, &project.Description, &project.StartDate.Time, &project.EndDate.Time, &project.CreatedAt, &project.LastModified)
+		if err != nil {
+			slog.Error("failed to scan project", "error", err.Error())
+			return nil, err
+		}
+
+		projects = append(projects, project)
+	}
+
+	return projects, nil
 }
 
 func (w *WorkspaceStore) DeleteProject(ctx context.Context, id uuid.UUID) error {

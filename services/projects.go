@@ -77,3 +77,7 @@ func (s *WorkspaceService) UpdateProject(ctx context.Context, data map[string]an
 func (s *WorkspaceService) DeleteProject(ctx context.Context, id uuid.UUID) error {
 	return s.store.DeleteProject(ctx, id)
 }
+
+func (s *WorkspaceService) GetProjectsForWorkspace(ctx context.Context, workspaceId uuid.UUID) ([]models.Project, error) {
+	return s.store.GetWorkspaceProjects(ctx, workspaceId)
+}
