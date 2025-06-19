@@ -30,7 +30,7 @@ func (h *Handler) CreateWorkspace(c *gin.Context) {
 		User:        &models.User{Id: input.UserID},
 	}
 
-	err = h.wss.NewWorkspace(c.Request.Context(), ws)
+	err = h.workspaces.NewWorkspace(c.Request.Context(), ws)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -47,7 +47,7 @@ func (h *Handler) GetWorkspace(c *gin.Context) {
 		return
 	}
 
-	ws, err := h.wss.GetWorkspace(c.Request.Context(), id)
+	ws, err := h.workspaces.GetWorkspace(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -64,7 +64,7 @@ func (h *Handler) GetWorkspace(c *gin.Context) {
 func (h *Handler) GetUserWorkspaces(c *gin.Context) {
 	idStr, _ := c.Get("user_id")
 
-	workspaces, err := h.wss.GetUserWorkspaces(c.Request.Context(), uuid.MustParse(idStr.(string)))
+	workspaces, err := h.workspaces.GetUserWorkspaces(c.Request.Context(), uuid.MustParse(idStr.(string)))
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -95,7 +95,7 @@ func (h *Handler) UpdateWorkspace(c *gin.Context) {
 
 	input["id"] = id.String()
 
-	ws, err := h.wss.UpdateWorkspace(c.Request.Context(), input)
+	ws, err := h.workspaces.UpdateWorkspace(c.Request.Context(), input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return
@@ -112,7 +112,7 @@ func (h *Handler) DeleteWorkspace(c *gin.Context) {
 		return
 	}
 
-	err = h.wss.DeleteWorkspace(c.Request.Context(), id)
+	err = h.workspaces.DeleteWorkspace(c.Request.Context(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return
@@ -140,7 +140,7 @@ func (h *Handler) AddWorkspaceMember(c *gin.Context) {
 		return
 	}
 
-	err = h.wss.AddWorkspaceMember(c.Request.Context(), id, input.UserId, input.Role)
+	err = h.workspaces.AddWorkspaceMember(c.Request.Context(), id, input.UserId, input.Role)
 	if err != nil {
 		if errors.Is(err, services.ErrFailedOperation) {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
@@ -163,7 +163,7 @@ func (h *Handler) GetWorkspaceMembers(c *gin.Context) {
 		return
 	}
 
-	users, err := h.wss.GetWorkspaceMembers(c.Request.Context(), id)
+	users, err := h.workspaces.GetWorkspaceMembers(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -191,7 +191,7 @@ func (h *Handler) DeleteWorkspaceMember(c *gin.Context) {
 		return
 	}
 
-	err = h.wss.DeleteWorkspaceMember(c.Request.Context(), id, memberId)
+	err = h.workspaces.DeleteWorkspaceMember(c.Request.Context(), id, memberId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return

@@ -32,7 +32,7 @@ func (h *Handler) CreateProject(c *gin.Context) {
 		StartDate:   input.StartDate,
 		EndDate:     input.EndDate,
 	}
-	err = h.wss.CreateProject(c.Request.Context(), project)
+	err = h.workspaces.CreateProject(c.Request.Context(), project)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return
@@ -49,7 +49,7 @@ func (h *Handler) GetProject(c *gin.Context) {
 		return
 	}
 
-	project, err := h.wss.GetProject(c.Request.Context(), id)
+	project, err := h.workspaces.GetProject(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -81,7 +81,7 @@ func (h *Handler) UpdateProject(c *gin.Context) {
 
 	input["id"] = id
 
-	ws, err := h.wss.UpdateProject(c.Request.Context(), input)
+	ws, err := h.workspaces.UpdateProject(c.Request.Context(), input)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -105,7 +105,7 @@ func (h *Handler) GetProjectsInWorkspace(c *gin.Context) {
 		return
 	}
 
-	projects, err := h.wss.GetProjectsForWorkspace(c.Request.Context(), id)
+	projects, err := h.workspaces.GetProjectsForWorkspace(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -126,7 +126,7 @@ func (h *Handler) DeleteProject(c *gin.Context) {
 		return
 	}
 
-	err = h.wss.DeleteProject(c.Request.Context(), id)
+	err = h.workspaces.DeleteProject(c.Request.Context(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return

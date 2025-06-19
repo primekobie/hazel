@@ -25,7 +25,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.us.CreateUser(c.Request.Context(), input.Name, input.Email, input.Password)
+	user, err := h.users.CreateUser(c.Request.Context(), input.Name, input.Email, input.Password)
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateUser) {
 			c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
@@ -49,7 +49,7 @@ func (h *Handler) VerifyUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.us.VerifyUser(c.Request.Context(), input.Code, input.Email)
+	user, err := h.users.VerifyUser(c.Request.Context(), input.Code, input.Email)
 	if err != nil {
 		if errors.Is(err, services.ErrInvalidToken) {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -72,7 +72,7 @@ func (h *Handler) RequestVerification(c *gin.Context) {
 		return
 	}
 
-	err := h.us.ResendVerificationEmail(c.Request.Context(), input.Email)
+	err := h.users.ResendVerificationEmail(c.Request.Context(), input.Email)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -101,7 +101,7 @@ func (h *Handler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	session, err := h.us.NewSession(c.Request.Context(), input.Email, input.Password)
+	session, err := h.users.NewSession(c.Request.Context(), input.Email, input.Password)
 	if err != nil {
 		if errors.Is(err, services.ErrFailedOperation) {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
@@ -125,7 +125,7 @@ func (h *Handler) GetUserAccessToken(c *gin.Context) {
 		return
 	}
 
-	access, err := h.us.RefreshSession(c.Request.Context(), input.RefresToken)
+	access, err := h.users.RefreshSession(c.Request.Context(), input.RefresToken)
 	if err != nil {
 		if errors.Is(err, services.ErrFailedOperation) {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
@@ -146,7 +146,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.us.FetchUser(c.Request.Context(), uuid.MustParse(userId))
+	user, err := h.users.FetchUser(c.Request.Context(), uuid.MustParse(userId))
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -177,7 +177,7 @@ func (h *Handler) UpdateUserData(c *gin.Context) {
 	id := uuid.MustParse(idString.(string))
 	input["id"] = id
 
-	user, err := h.us.UpdateUser(c.Request.Context(), input)
+	user, err := h.users.UpdateUser(c.Request.Context(), input)
 	if err != nil {
 		if !errors.Is(err, services.ErrFailedOperation) {
 			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
@@ -197,7 +197,7 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	err := h.us.DeleteUser(c.Request.Context(), userId)
+	err := h.users.DeleteUser(c.Request.Context(), userId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})

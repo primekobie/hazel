@@ -33,7 +33,7 @@ func (h *Handler) CreateTask(c *gin.Context) {
 		Due:         input.Due,
 		Priority:    input.Priority,
 	}
-	err = h.wss.CreateTask(c.Request.Context(), task)
+	err = h.workspaces.CreateTask(c.Request.Context(), task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return
@@ -50,7 +50,7 @@ func (h *Handler) GetTask(c *gin.Context) {
 		return
 	}
 
-	task, err := h.wss.GetTask(c.Request.Context(), id)
+	task, err := h.workspaces.GetTask(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -82,7 +82,7 @@ func (h *Handler) UpdateTask(c *gin.Context) {
 
 	input["id"] = id
 
-	task, err := h.wss.UpdateTask(c.Request.Context(), input)
+	task, err := h.workspaces.UpdateTask(c.Request.Context(), input)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -107,7 +107,7 @@ func (h *Handler) GetProjectTasks(c *gin.Context) {
 		return
 	}
 
-	tasks, err := h.wss.GetProjectTasks(c.Request.Context(), id)
+	tasks, err := h.workspaces.GetProjectTasks(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -128,7 +128,7 @@ func (h *Handler) DeleteTask(c *gin.Context) {
 		return
 	}
 
-	err = h.wss.DeleteTask(c.Request.Context(), id)
+	err = h.workspaces.DeleteTask(c.Request.Context(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return
@@ -154,7 +154,7 @@ func (h *Handler) AssignTaskToUser(c *gin.Context) {
 		return
 	}
 
-	err = h.wss.AssignTaskToUser(c.Request.Context(), id, input.UserId)
+	err = h.workspaces.AssignTaskToUser(c.Request.Context(), id, input.UserId)
 	if err != nil {
 		if errors.Is(err, services.ErrFailedOperation) {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
@@ -184,7 +184,7 @@ func (h *Handler) RemoveAssignment(c *gin.Context) {
 		return
 	}
 
-	err = h.wss.UnassignTask(c.Request.Context(), id, userId)
+	err = h.workspaces.UnassignTask(c.Request.Context(), id, userId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
 		return
@@ -201,7 +201,7 @@ func (h *Handler) GetAssignedUsers(c *gin.Context) {
 		return
 	}
 
-	users, err := h.wss.GetAssignedUsers(c.Request.Context(), id)
+	users, err := h.workspaces.GetAssignedUsers(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
