@@ -4,8 +4,6 @@
 - [X] Initialize Git repository
 - [X] Create project structure 
 - [X] Initialize Go module (`go mod init`)
-- [X] Set up configuration management (`viper` or env parsing)
-- [X] Create `.env` for local development
 - [X] Set up Dockerfile and docker-compose.yml
 - [X] Create Taskfile.yaml scripts for build and dev tasks
 
@@ -49,8 +47,9 @@
 - [X] `GET /workspaces/:id` – Get specific workspace
 - [X] `PATCH /workspaces/:id` – Update workspace
 - [X] `DELETE /workspaces/:id` – Delete workspace
-- [X] `POST /workspaces/:id/member` - Join a workspace
-- [X] `DELETE /workspaces/:id/member` - Leave a workspace
+- [X] `POST /workspaces/:id/members` - Join a workspace
+- [X] `GET /workspaces/:id/members` - Get Workspace members
+- [X] `DELETE /workspaces/:id/members` - Leave a workspace
 - [X] `GET /workspaces/:id/projects` – List projects in a workspace
 
 ### Projects
@@ -66,9 +65,9 @@
 - [X] `GET /tasks/:id` – Get task
 - [X] `PATCH /tasks/:id` – Update task
 - [X] `DELETE /tasks/:id` – Delete task
-- [ ] `POST /tasks/:id/assign` – Assign task to user
-- [ ] `DELETE /tasks/:id/assign` – Remove task assignment
-- [ ] `GET /tasks/:id/assign` – Get all users assigned to a task
+- [X] `POST /tasks/:id/assign` – Assign task to user
+- [X] `DELETE /tasks/:id/assign` – Remove task assignment
+- [X] `GET /tasks/:id/assign` – Get all users assigned to a task
 
 ---
 

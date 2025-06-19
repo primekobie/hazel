@@ -156,6 +156,24 @@ func (h *Handler) AddWorkspaceMember(c *gin.Context) {
 
 func (h *Handler) GetWorkspaceMembers(c *gin.Context) {
 
+	id, err := getUUIDparam(c, "id")
+	if err != nil {
+		slog.Error("failed to get uuid param", "error", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id format"})
+		return
+	}
+
+	users, err := h.wss.GetWorkspaceMembers(c.Request.Context(), id)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"message": ErrServerError.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
 }
 
 func (h *Handler) DeleteWorkspaceMember(c *gin.Context) {

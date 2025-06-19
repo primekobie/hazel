@@ -29,6 +29,7 @@ type WorkspaceStore interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 	Get(ctx context.Context, id uuid.UUID) (*Workspace, error)
 	GetAllForUser(ctx context.Context, userId uuid.UUID) ([]Workspace, error)
+	GetWorkspaceMembers(ctx context.Context, workspaceId uuid.UUID) ([]User, error)
 	AddMembership(ctx context.Context, workspaceId, userId uuid.UUID, role string) error
 	DeleteMembership(ctx context.Context, workspaceId, userId uuid.UUID) error
 	ProjectStore

@@ -94,6 +94,10 @@ func (s *WorkspaceService) AddWorkspaceMember(ctx context.Context, workspaceId, 
 	return nil
 }
 
+func (s *WorkspaceService) GetWorkspaceMembers(ctx context.Context, id uuid.UUID) (any, error) {
+	return s.store.GetWorkspaceMembers(ctx, id)
+}
+
 func (s *WorkspaceService) DeleteWorkspaceMember(ctx context.Context, workspaceId, userId uuid.UUID) error {
 	return s.store.DeleteMembership(ctx, workspaceId, userId)
 }

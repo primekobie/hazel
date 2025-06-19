@@ -177,6 +177,45 @@ func (w *WorkspaceStore) AddMembership(ctx context.Context, workspaceId, userId 
 	return nil
 }
 
+// GetWorkspaceMembers implements models.WorkspaceStore.
+func (w *WorkspaceStore) GetWorkspaceMembers(ctx context.Context, workspaceId uuid.UUID) ([]models.User, error) {
+	query := `SELECT
+	u.id,
+	u.name,
+	u.email,
+	u.profile_photo,
+	u.created_at,
+	u.last_modified
+	FROM workspace_memberships AS wm
+	INNER JOIN users AS u ON wm.user_id = u.id
+	WHERE wm.workspace_id = $1;`
+
+	users := []models.User{}
+
+	rows, err := w.conn.Query(ctx, query, workspaceId)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, models.ErrNotFound
+		}
+
+		slog.Error("failed to fetch users", "error", err.Error())
+		return nil, err
+	}
+
+	for rows.Next() {
+		user := models.User{}
+		err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.ProfilePhoto, &user.CreatedAt, &user.LastModifed)
+		if err != nil {
+			slog.Error("failed to scan users", "error", err.Error())
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
 func (w *WorkspaceStore) DeleteMembership(ctx context.Context, workspaceId, userId uuid.UUID) error {
 	delQuery := `DELETE FROM workspace_memberships
 	WHERE workspace_id = $1 AND user_id = $2 AND NOT role = 'owner';`
