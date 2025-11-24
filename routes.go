@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/freekobie/hazel/docs"
-	"github.com/freekobie/hazel/middlewares"
+	"github.com/primekobie/hazel/docs"
+	"github.com/primekobie/hazel/middlewares"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

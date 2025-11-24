@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log/slog"
 
-	"github.com/freekobie/hazel/models"
+	"github.com/primekobie/hazel/models"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )

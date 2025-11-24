@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/freekobie/hazel/auth"
+	"github.com/primekobie/hazel/auth"
 	"github.com/gin-gonic/gin"
 )
 

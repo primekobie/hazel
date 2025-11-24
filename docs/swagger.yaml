@@ -104,7 +104,7 @@ info:
   contact:
     email: support@hazel.local
     name: API Support
-    url: https://github.com/freekobie/hazel
+    url: https://github.com/primekobie/hazel
   description: This is the backend API for the Hazel project management application.
   title: Hazel Project Management API
   version: "1.0"

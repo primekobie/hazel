@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/freekobie/hazel/models"
+	"github.com/primekobie/hazel/models"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )

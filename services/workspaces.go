@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/freekobie/hazel/models"
+	"github.com/primekobie/hazel/models"
 	"github.com/google/uuid"
 )
 

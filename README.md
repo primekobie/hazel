@@ -27,7 +27,7 @@ Hazel is a backend service for project management app, built with Go, using Post
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/freekobie/hazel.git
+   git clone https://github.com/primekobie/hazel.git
    cd hazel
    ```
 
